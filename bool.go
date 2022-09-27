@@ -9,7 +9,7 @@ import (
 func ToBool(value interface{}) (res bool, err error) {
 	res = false
 	err = nil
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			str := ToValidString(value)
@@ -23,7 +23,7 @@ func ToBool(value interface{}) (res bool, err error) {
 					res = false
 				}
 			default:
-				err = fmt.Errorf("convert: %v to boolean failed", value)
+				err = fmt.Errorf("convert: %v (%v) to boolean failed", value, v)
 			}
 		}
 	case bool:

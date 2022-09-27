@@ -8,7 +8,7 @@ import (
 
 // ToInt converts any type of values to int
 func ToInt(value interface{}) (res int, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -96,7 +96,7 @@ func ToInt(value interface{}) (res int, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToInt(valueStr)
 		}
 	}
@@ -105,7 +105,7 @@ func ToInt(value interface{}) (res int, err error) {
 
 // ToInt8 converts any type of values to int8
 func ToInt8(value interface{}) (res int8, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -193,7 +193,7 @@ func ToInt8(value interface{}) (res int8, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToInt8(valueStr)
 		}
 	}
@@ -202,7 +202,7 @@ func ToInt8(value interface{}) (res int8, err error) {
 
 // ToInt16 converts any type of values to int16
 func ToInt16(value interface{}) (res int16, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -290,7 +290,7 @@ func ToInt16(value interface{}) (res int16, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToInt16(valueStr)
 		}
 	}
@@ -299,7 +299,7 @@ func ToInt16(value interface{}) (res int16, err error) {
 
 // ToInt32 converts any type of values to int32
 func ToInt32(value interface{}) (res int32, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -387,7 +387,7 @@ func ToInt32(value interface{}) (res int32, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToInt32(valueStr)
 		}
 	}
@@ -396,7 +396,7 @@ func ToInt32(value interface{}) (res int32, err error) {
 
 // ToInt64 converts any type of values to int64
 func ToInt64(value interface{}) (res int64, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -480,7 +480,7 @@ func ToInt64(value interface{}) (res int64, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToInt64(valueStr)
 		}
 	}
@@ -489,7 +489,7 @@ func ToInt64(value interface{}) (res int64, err error) {
 
 // ToUint converts any type of values to uint
 func ToUint(value interface{}) (res uint, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -576,7 +576,7 @@ func ToUint(value interface{}) (res uint, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToUint(valueStr)
 		}
 	}
@@ -585,7 +585,7 @@ func ToUint(value interface{}) (res uint, err error) {
 
 // ToUint8 converts any type of values to uint8
 func ToUint8(value interface{}) (res uint8, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -672,7 +672,7 @@ func ToUint8(value interface{}) (res uint8, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToUint8(valueStr)
 		}
 	}
@@ -681,7 +681,7 @@ func ToUint8(value interface{}) (res uint8, err error) {
 
 // ToUint16 converts any type of values to uint16
 func ToUint16(value interface{}) (res uint16, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -768,7 +768,7 @@ func ToUint16(value interface{}) (res uint16, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToUint16(valueStr)
 		}
 	}
@@ -777,7 +777,7 @@ func ToUint16(value interface{}) (res uint16, err error) {
 
 // ToUint32 converts any type of values to uint32
 func ToUint32(value interface{}) (res uint32, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -864,7 +864,7 @@ func ToUint32(value interface{}) (res uint32, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToUint32(valueStr)
 		}
 	}
@@ -873,7 +873,7 @@ func ToUint32(value interface{}) (res uint32, err error) {
 
 // ToUint64 converts any type of values to uint64
 func ToUint64(value interface{}) (res uint64, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -960,7 +960,7 @@ func ToUint64(value interface{}) (res uint64, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToUint64(valueStr)
 		}
 	}
@@ -969,7 +969,7 @@ func ToUint64(value interface{}) (res uint64, err error) {
 
 // ToFloat32 converts any type of values to float32
 func ToFloat32(value interface{}) (res float32, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -1057,7 +1057,7 @@ func ToFloat32(value interface{}) (res float32, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToFloat32(valueStr)
 		}
 	}
@@ -1066,7 +1066,7 @@ func ToFloat32(value interface{}) (res float32, err error) {
 
 // ToFloat64 converts any type of values to float64
 func ToFloat64(value interface{}) (res float64, err error) {
-	switch value.(type) {
+	switch v := value.(type) {
 	case string:
 		{
 			valueString := value.(string)
@@ -1154,7 +1154,7 @@ func ToFloat64(value interface{}) (res float64, err error) {
 		}
 	default:
 		{
-			valueStr := ToValidString(value)
+			valueStr := ToValidString(v)
 			res, err = ToFloat64(valueStr)
 		}
 	}
