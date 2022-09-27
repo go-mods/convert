@@ -1,6 +1,9 @@
-package convert
+package convert_test
 
-import "testing"
+import (
+	"github.com/go-mods/convert"
+	"testing"
+)
 
 type args struct {
 	value interface{}
@@ -38,7 +41,7 @@ func TestToInt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRes, err := ToInt(tt.args.value)
+			gotRes, err := convert.ToInt(tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ToInt() error = %v, wantErr %v", err, tt.wantErr)
 				return
