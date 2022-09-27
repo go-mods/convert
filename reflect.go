@@ -1,6 +1,7 @@
 package convert
 
 import (
+	"encoding/json"
 	"errors"
 	"reflect"
 	"time"
@@ -42,6 +43,32 @@ func ToValue(value interface{}, to reflect.Type) (reflect.Value, error) {
 	}
 
 	return InvalidValue, errors.New("casting not supported")
+}
+
+func ToJsonValue(value interface{}, to reflect.Type) (reflect.Value, error) {
+	asPtr := to.Kind() == reflect.Pointer
+	if asPtr {
+		to = to.Elem()
+	}
+
+	jsonString, err := ToString(value)
+	if err != nil {
+		return InvalidValue, err
+	}
+
+	jsonValuePtr := reflect.New(to)
+	jsonValue := jsonValuePtr.Elem()
+
+	err = json.Unmarshal([]byte(jsonString), jsonValue.Addr().Interface())
+	if err != nil {
+		return InvalidValue, err
+	}
+
+	if asPtr {
+		return jsonValuePtr, nil
+	}
+
+	return jsonValue, nil
 }
 
 func castString(value interface{}, asPtr bool) (reflect.Value, error) {
