@@ -11,6 +11,7 @@ type Caster func(value interface{}, asPtr bool) (reflect.Value, error)
 
 var (
 	InvalidValue = reflect.Value{}
+	timeType     = reflect.TypeOf((*time.Time)(nil)).Elem()
 )
 
 var casters = map[reflect.Type]Caster{
@@ -72,16 +73,23 @@ func ToJsonValue(value interface{}, to reflect.Type) (reflect.Value, error) {
 }
 
 func castString(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToString(value)
-	if err != nil {
-		return InvalidValue, err
+	var s string
+	var err error
+
+	if reflect.TypeOf(value) == timeType {
+		s = value.(time.Time).Format(time.RFC3339)
+	} else {
+		s, err = ToString(value)
+		if err != nil {
+			return InvalidValue, err
+		}
 	}
 
 	if asPtr {
-		return reflect.ValueOf(&v), nil
+		return reflect.ValueOf(&s), nil
 	}
 
-	return reflect.ValueOf(v), nil
+	return reflect.ValueOf(s), nil
 }
 
 func castBool(value interface{}, asPtr bool) (reflect.Value, error) {
@@ -265,6 +273,7 @@ func castTime(value interface{}, asPtr bool) (reflect.Value, error) {
 
 	return reflect.ValueOf(v), nil
 }
+
 func castTimeDuration(value interface{}, asPtr bool) (reflect.Value, error) {
 	v, err := ToDuration(value)
 	if err != nil {
