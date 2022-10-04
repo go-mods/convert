@@ -122,3 +122,56 @@ func TestToLayoutTime(t *testing.T) {
 		})
 	}
 }
+
+func TestToTimeString(t *testing.T) {
+
+	type args struct {
+		t      time.Time
+		format []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"FromDate", args{nowDate, []string{carbon.DateLayout}}, "2022-07-02", false},
+		{"FromDate", args{nowDate, []string{"Y-m-d"}}, "2022-07-02", false},
+
+		{"FromDate", args{nowDate, []string{"m-d-y"}}, "07-02-22", false},
+		{"FromDate", args{nowDate, []string{"m-d-Y"}}, "07-02-2022", false},
+		{"FromDate", args{nowDate, []string{"m-j-Y"}}, "07-2-2022", false},
+		{"FromDate", args{nowDate, []string{"n-d-Y"}}, "7-02-2022", false},
+		{"FromDate", args{nowDate, []string{"n-j-Y"}}, "7-2-2022", false},
+		{"FromDate", args{nowDate, []string{"n-j-y"}}, "7-2-22", false},
+
+		{"FromDate", args{nowDate, []string{"d/m/y"}}, "02/07/22", false},
+		{"FromDate", args{nowDate, []string{"d/m/Y"}}, "02/07/2022", false},
+		{"FromDate", args{nowDate, []string{"j/m/Y"}}, "2/07/2022", false},
+		{"FromDate", args{nowDate, []string{"d/n/Y"}}, "02/7/2022", false},
+		{"FromDate", args{nowDate, []string{"j/n/Y"}}, "2/7/2022", false},
+		{"FromDate", args{nowDate, []string{"j/n/y"}}, "2/7/22", false},
+
+		{"FromDate", args{nowDateTime, []string{carbon.DateTimeLayout}}, "2022-07-02 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"Y-m-d h:i:s"}}, "2022-07-02 11:45:02", false},
+
+		{"FromDate", args{nowDateTime, []string{"m-d-y h:i:s"}}, "07-02-22 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"m-d-Y H:i:s"}}, "07-02-2022 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"m-j-Y h:i:s"}}, "07-2-2022 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"n-d-Y h:i:s"}}, "7-02-2022 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"n-j-Y h:i:s"}}, "7-2-2022 11:45:02", false},
+		{"FromDate", args{nowDateTime, []string{"n-j-y h:i:s"}}, "7-2-22 11:45:02", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ToTimeString(tt.args.t, tt.args.format...)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ToTimeString() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("ToTimeString() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

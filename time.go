@@ -27,6 +27,21 @@ func ToLayoutTime(layout string, value interface{}) (res time.Time, err error) {
 	return t, c.Error
 }
 
+func ToTimeString(t time.Time, format ...string) (string, error) {
+	c := carbon.Time2Carbon(t)
+	if c.Error != nil {
+		return "", c.Error
+	}
+	if len(format) > 0 {
+		r := t.Format(format[len(format)-1])
+		if r != format[len(format)-1] {
+			return r, nil
+		}
+		return c.ToFormatString(format[len(format)-1]), nil
+	}
+	return c.String(), nil
+}
+
 // ToDuration converts any type of values to duration
 func ToDuration(value interface{}) (res time.Duration, err error) {
 	valueStr := ToValidString(value)
