@@ -8,8 +8,11 @@ import (
 
 // ToTime converts any type of value to time
 func ToTime(value interface{}) (res time.Time, err error) {
+
 	if reflect.TypeOf(value) == timeType {
 		return value.(time.Time), nil
+	} else if reflect.TypeOf(value) == timePtrType {
+		return ToTime(reflect.ValueOf(value).Elem().Interface())
 	} else {
 		c := carbon.Parse(ToValidString(value))
 		t := c.Carbon2Time()

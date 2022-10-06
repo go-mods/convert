@@ -12,6 +12,7 @@ type Caster func(value interface{}, asPtr bool) (reflect.Value, error)
 var (
 	InvalidValue = reflect.Value{}
 	timeType     = reflect.TypeOf((*time.Time)(nil)).Elem()
+	timePtrType  = reflect.TypeOf((*time.Time)(nil))
 )
 
 var casters = map[reflect.Type]Caster{

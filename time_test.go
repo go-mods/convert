@@ -25,6 +25,7 @@ func TestToTime(t *testing.T) {
 		{"FromTime", args{now}, now, false},
 		{"FromDateString", args{"2022-07-02"}, nowDate, false},
 		{"FromDateTimeString", args{"2022-07-02 11:45:02"}, nowDateTime, false},
+		{"FromTimePtr", args{&now}, now, false},
 	}
 
 	for _, tt := range tests {
