@@ -1161,6 +1161,90 @@ func ToFloat64(value interface{}) (res float64, err error) {
 	return
 }
 
+func ToIntDef(value interface{}, def int) int {
+	if val, err := ToInt(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToInt8Def(value interface{}, def int8) int8 {
+	if val, err := ToInt8(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToInt16Def(value interface{}, def int16) int16 {
+	if val, err := ToInt16(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToInt32Def(value interface{}, def int32) int32 {
+	if val, err := ToInt32(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToInt64Def(value interface{}, def int64) int64 {
+	if val, err := ToInt64(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToUintDef(value interface{}, def uint) uint {
+	if val, err := ToUint(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToUint8Def(value interface{}, def uint8) uint8 {
+	if val, err := ToUint8(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToUint16Def(value interface{}, def uint16) uint16 {
+	if val, err := ToUint16(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToUint32Def(value interface{}, def uint32) uint32 {
+	if val, err := ToUint32(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToUint64Def(value interface{}, def uint64) uint64 {
+	if val, err := ToUint64(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToFloat32Def(value interface{}, def float32) float32 {
+	if val, err := ToFloat32(value); err == nil {
+		return val
+	}
+	return def
+}
+
+func ToFloat64Def(value interface{}, def float64) float64 {
+	if val, err := ToFloat64(value); err == nil {
+		return val
+	}
+	return def
+}
+
 // ToIntOrPanic converts any type of value to int or call the panic function
 func ToIntOrPanic(value interface{}) (res int) {
 	if res, err := ToInt(value); err == nil {
