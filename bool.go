@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// ToBool converts any type of value to string
+// ToBool converts any type of value to bool or returns error
 func ToBool(value interface{}) (res bool, err error) {
 	res = false
 	err = nil
@@ -37,6 +37,15 @@ func ToBool(value interface{}) (res bool, err error) {
 	return
 }
 
+// ToBoolDef converts any type of value to bool or returns default value
+func ToBoolDef(value interface{}, def bool) bool {
+	if val, err := ToBool(value); err == nil {
+		return val
+	}
+	return def
+}
+
+// ToBoolOrPanic converts any type of value to bool or panics
 func ToBoolOrPanic(value interface{}) bool {
 	if res, err := ToBool(value); err == nil {
 		return res
