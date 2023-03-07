@@ -39,10 +39,30 @@ func ToBool(value interface{}) (res bool, err error) {
 
 // ToBoolDef converts any type of value to bool or returns default value
 func ToBoolDef(value interface{}, def bool) bool {
-	if val, err := ToBool(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToBool(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 // ToBoolOrPanic converts any type of value to bool or panics

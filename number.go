@@ -1162,87 +1162,327 @@ func ToFloat64(value interface{}) (res float64, err error) {
 }
 
 func ToIntDef(value interface{}, def int) int {
-	if val, err := ToInt(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToInt(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToInt8Def(value interface{}, def int8) int8 {
-	if val, err := ToInt8(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToInt8(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToInt16Def(value interface{}, def int16) int16 {
-	if val, err := ToInt16(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToInt16(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToInt32Def(value interface{}, def int32) int32 {
-	if val, err := ToInt32(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToInt32(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToInt64Def(value interface{}, def int64) int64 {
-	if val, err := ToInt64(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToInt64(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToUintDef(value interface{}, def uint) uint {
-	if val, err := ToUint(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToUint(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToUint8Def(value interface{}, def uint8) uint8 {
-	if val, err := ToUint8(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToUint8(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToUint16Def(value interface{}, def uint16) uint16 {
-	if val, err := ToUint16(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToUint16(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToUint32Def(value interface{}, def uint32) uint32 {
-	if val, err := ToUint32(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToUint32(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToUint64Def(value interface{}, def uint64) uint64 {
-	if val, err := ToUint64(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToUint64(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToFloat32Def(value interface{}, def float32) float32 {
-	if val, err := ToFloat32(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToFloat32(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 func ToFloat64Def(value interface{}, def float64) float64 {
-	if val, err := ToFloat64(value); err == nil {
-		return val
+	// return th default value if value is nil
+	if value == nil {
+		return def
 	}
-	return def
+
+	// return th default value if value is of type string and its length is zero
+	if v, ok := value.(string); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	// return the default value if value is of type []byte and its length is zero
+	if v, ok := value.([]byte); ok {
+		if len(v) == 0 {
+			return def
+		}
+	}
+
+	res, err := ToFloat64(value)
+	if err != nil {
+		return def
+	}
+	return res
 }
 
 // ToIntOrPanic converts any type of value to int or call the panic function

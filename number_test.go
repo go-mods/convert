@@ -54,3 +54,29 @@ func TestToInt(t *testing.T) {
 		})
 	}
 }
+
+func TestToIntDef(t *testing.T) {
+
+	type TestIntDef struct {
+		name    string
+		args    args
+		def     int
+		wantRes int
+		wantErr bool
+	}
+
+	tests := []TestIntDef{
+		{name: "ToIntDefFromEmptyString", args: args{""}, def: 1, wantRes: 1, wantErr: false},
+		{name: "ToIntDefFromString", args: args{"1.2"}, def: 1, wantRes: 1, wantErr: false},
+		{name: "ToIntDefFromInt", args: args{int(2)}, def: 1, wantRes: 2, wantErr: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotRes := convert.ToIntDef(tt.args.value, tt.def)
+			if gotRes != tt.wantRes {
+				t.Errorf("ToIntDef() gotRes = %v, want %v", gotRes, tt.wantRes)
+			}
+		})
+	}
+}
