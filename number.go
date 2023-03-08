@@ -1162,12 +1162,12 @@ func ToFloat64(value interface{}) (res float64, err error) {
 }
 
 func ToIntDef(value interface{}, def int) int {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1189,12 +1189,12 @@ func ToIntDef(value interface{}, def int) int {
 }
 
 func ToInt8Def(value interface{}, def int8) int8 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1216,12 +1216,12 @@ func ToInt8Def(value interface{}, def int8) int8 {
 }
 
 func ToInt16Def(value interface{}, def int16) int16 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1243,12 +1243,12 @@ func ToInt16Def(value interface{}, def int16) int16 {
 }
 
 func ToInt32Def(value interface{}, def int32) int32 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1270,12 +1270,12 @@ func ToInt32Def(value interface{}, def int32) int32 {
 }
 
 func ToInt64Def(value interface{}, def int64) int64 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1297,12 +1297,12 @@ func ToInt64Def(value interface{}, def int64) int64 {
 }
 
 func ToUintDef(value interface{}, def uint) uint {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1324,12 +1324,12 @@ func ToUintDef(value interface{}, def uint) uint {
 }
 
 func ToUint8Def(value interface{}, def uint8) uint8 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1351,12 +1351,12 @@ func ToUint8Def(value interface{}, def uint8) uint8 {
 }
 
 func ToUint16Def(value interface{}, def uint16) uint16 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1378,12 +1378,12 @@ func ToUint16Def(value interface{}, def uint16) uint16 {
 }
 
 func ToUint32Def(value interface{}, def uint32) uint32 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1405,12 +1405,12 @@ func ToUint32Def(value interface{}, def uint32) uint32 {
 }
 
 func ToUint64Def(value interface{}, def uint64) uint64 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1432,12 +1432,12 @@ func ToUint64Def(value interface{}, def uint64) uint64 {
 }
 
 func ToFloat32Def(value interface{}, def float32) float32 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
@@ -1459,12 +1459,12 @@ func ToFloat32Def(value interface{}, def float32) float32 {
 }
 
 func ToFloat64Def(value interface{}, def float64) float64 {
-	// return th default value if value is nil
+	// return the default value if value is nil
 	if value == nil {
 		return def
 	}
 
-	// return th default value if value is of type string and its length is zero
+	// return the default value if value is of type string and its length is zero
 	if v, ok := value.(string); ok {
 		if len(v) == 0 {
 			return def
