@@ -10,9 +10,27 @@ import (
 type Caster func(value interface{}, asPtr bool) (reflect.Value, error)
 
 var (
-	InvalidValue = reflect.Value{}
+	stringType   = reflect.TypeOf("")
+	boolType     = reflect.TypeOf(true)
+	intType      = reflect.TypeOf(int(0))
+	int8Type     = reflect.TypeOf(int8(0))
+	int16Type    = reflect.TypeOf(int16(0))
+	int32Type    = reflect.TypeOf(int32(0))
+	int64Type    = reflect.TypeOf(int64(0))
+	uintType     = reflect.TypeOf(uint(0))
+	uint8Type    = reflect.TypeOf(uint8(0))
+	uint16Type   = reflect.TypeOf(uint16(0))
+	uint32Type   = reflect.TypeOf(uint32(0))
+	uint64Type   = reflect.TypeOf(uint64(0))
+	float32Type  = reflect.TypeOf(float32(0))
+	float64Type  = reflect.TypeOf(float64(0))
 	timeType     = reflect.TypeOf((*time.Time)(nil)).Elem()
 	timePtrType  = reflect.TypeOf((*time.Time)(nil))
+	durationType = reflect.TypeOf(time.Duration(0))
+	nilType      = reflect.TypeOf(nil)
+	InvalidType  = reflect.TypeOf(reflect.Value{})
+
+	InvalidValue = reflect.Value{}
 )
 
 var casters = map[reflect.Type]Caster{
@@ -286,4 +304,62 @@ func castTimeDuration(value interface{}, asPtr bool) (reflect.Value, error) {
 	}
 
 	return reflect.ValueOf(v), nil
+}
+
+func GetConvertType(value interface{}) reflect.Type {
+	if value == nil {
+		return nil
+	}
+
+	// try to find the type
+	if _, err := ToTime(value); err == nil {
+		return timeType
+	}
+	if _, err := ToDuration(value); err == nil {
+		return durationType
+	}
+	if _, err := ToInt(value); err == nil {
+		if _, err := ToInt8(value); err == nil {
+			if _, err := ToInt16(value); err == nil {
+				if _, err := ToInt32(value); err == nil {
+					if _, err := ToInt64(value); err == nil {
+						return int64Type
+					}
+					return int32Type
+				}
+				return int16Type
+			}
+			return int8Type
+		}
+		return intType
+	}
+	if _, err := ToUint(value); err == nil {
+		if _, err := ToUint8(value); err == nil {
+			if _, err := ToUint16(value); err == nil {
+				if _, err := ToUint32(value); err == nil {
+					if _, err := ToUint64(value); err == nil {
+						return uint64Type
+					}
+					return uint32Type
+				}
+				return uint16Type
+			}
+			return uint8Type
+		}
+		return uintType
+	}
+	if _, err := ToFloat32(value); err == nil {
+		if _, err := ToFloat64(value); err == nil {
+			return float64Type
+		}
+		return float32Type
+	}
+	if _, err := ToBool(value); err == nil {
+		return boolType
+	}
+	if _, err := ToString(value); err == nil {
+		return stringType
+	}
+
+	return InvalidType
 }
