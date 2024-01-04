@@ -26,7 +26,7 @@ var typTime = reflect.TypeOf(time.Now())
 
 //var typTimeDuration = reflect.TypeOf(time.Duration(0))
 
-var now = carbon.CreateFromTimestamp(123456789).Carbon2Time()
+var now = carbon.CreateFromTimestamp(123456789).ToStdTime()
 var nowStr = carbon.CreateFromTimestamp(123456789).ToRfc3339String()
 
 func TestToValue(t *testing.T) {

@@ -15,7 +15,7 @@ func ToTime(value interface{}) (res time.Time, err error) {
 		return ToTime(reflect.ValueOf(value).Elem().Interface())
 	} else {
 		c := carbon.Parse(ToValidString(value))
-		t := c.Carbon2Time()
+		t := c.ToStdTime()
 		return t, c.Error
 	}
 }
@@ -26,12 +26,12 @@ func ToLayoutTime(layout string, value interface{}) (res time.Time, err error) {
 	if c.Error != nil {
 		return time.Time{}, err
 	}
-	t := c.Carbon2Time()
+	t := c.ToStdTime()
 	return t, c.Error
 }
 
 func ToTimeString(t time.Time, format ...string) (string, error) {
-	c := carbon.Time2Carbon(t)
+	c := carbon.CreateFromStdTime(t)
 	if c.Error != nil {
 		return "", c.Error
 	}
