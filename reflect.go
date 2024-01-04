@@ -308,7 +308,7 @@ func castTimeDuration(value interface{}, asPtr bool) (reflect.Value, error) {
 
 func GetConvertType(value interface{}) reflect.Type {
 	if value == nil {
-		return nil
+		return nilType
 	}
 
 	// try to find the type
