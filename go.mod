@@ -1,9 +1,9 @@
 module github.com/go-mods/convert
 
-go 1.20
+go 1.22
 
 require (
-	github.com/golang-module/carbon/v2 v2.3.10
+	github.com/golang-module/carbon/v2 v2.3.12
 	github.com/stretchr/testify v1.9.0
 )
 
