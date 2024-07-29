@@ -30,7 +30,7 @@ func TestToTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRes, err := ToTime(tt.args.value)
+			gotRes, err := ToTimeE(tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ToTime() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -97,7 +97,7 @@ func TestToLayoutTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRes, err := ToLayoutTime(tt.args.layout, tt.args.value)
+			gotRes, err := ToLayoutTimeE(tt.args.layout, tt.args.value)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ToLayoutTime() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -165,7 +165,7 @@ func TestToTimeString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ToTimeString(tt.args.t, tt.args.format...)
+			got, err := ToTimeStringE(tt.args.t, tt.args.format...)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ToTimeString() error = %v, wantErr %v", err, tt.wantErr)
 				return

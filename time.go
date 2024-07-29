@@ -2,35 +2,118 @@ package convert
 
 import (
 	"github.com/golang-module/carbon/v2"
-	"reflect"
 	"time"
 )
 
-// ToTime converts any type of value to time
-func ToTime(value interface{}) (res time.Time, err error) {
+// TimeConvert is a function type that converts any value to a pointer to time.Time.
+// If the conversion fails, it returns nil.
+// This allows for custom conversion logic to be implemented and passed to conversion functions.
+//
+// Examples:
+//
+//	customConverter := func(value interface{}) *time.Time {
+//		if v, ok := value.(CustomType); ok {
+//			t := v.CustomToTime()
+//			return &t
+//		}
+//		return nil
+//	}
+//
+//	result := ToTimeE(myCustomValue, customConverter)
+type TimeConvert func(value interface{}) *time.Time
 
-	if reflect.TypeOf(value) == timeType {
-		return value.(time.Time), nil
-	} else if reflect.TypeOf(value) == timePtrType {
-		return ToTime(reflect.ValueOf(value).Elem().Interface())
-	} else {
-		c := carbon.Parse(ToValidString(value))
-		t := c.StdTime()
-		return t, c.Error
+// ToTime converts any type of value to time.Time, ignoring errors.
+func ToTime(value interface{}, converters ...TimeConvert) time.Time {
+	res, _ := ToTimeE(value, converters...)
+	return res
+}
+
+// ToTimeOrDefault converts any type of value to time.Time or returns the provided default value if conversion fails.
+func ToTimeOrDefault(value interface{}, defaultValue time.Time, converters ...TimeConvert) time.Time {
+	res, err := ToTimeE(value, converters...)
+	if err != nil {
+		return defaultValue
+	}
+	return res
+}
+
+// ToTimeE converts any type of value to time.Time or returns an error.
+func ToTimeE(value interface{}, converters ...TimeConvert) (time.Time, error) {
+	for _, converter := range converters {
+		if result := converter(value); result != nil {
+			return *result, nil
+		}
+	}
+
+	switch v := value.(type) {
+	case time.Time:
+		return v, nil
+	case *time.Time:
+		return *v, nil
+	case string:
+		c := carbon.Parse(v)
+		if c.Error != nil {
+			return time.Time{}, c.Error
+		}
+		return c.StdTime(), nil
+	default:
+		valueStr := ToString(v)
+		return ToTimeE(valueStr, converters...)
 	}
 }
 
-// ToLayoutTime converts any type of value to time with a layout applied
-func ToLayoutTime(layout string, value interface{}) (res time.Time, err error) {
-	c := carbon.ParseByFormat(ToValidString(value), layout)
-	if c.Error != nil {
-		return time.Time{}, err
-	}
-	t := c.StdTime()
-	return t, c.Error
+// ToLayoutTime converts any type of value to time.Time with a layout applied, ignoring errors.
+func ToLayoutTime(layout string, value interface{}, converters ...TimeConvert) time.Time {
+	res, _ := ToLayoutTimeE(layout, value, converters...)
+	return res
 }
 
-func ToTimeString(t time.Time, format ...string) (string, error) {
+// ToLayoutTimeOrDefault converts any type of value to time.Time with a layout applied or returns the provided default value if conversion fails.
+func ToLayoutTimeOrDefault(layout string, value interface{}, defaultValue time.Time, converters ...TimeConvert) time.Time {
+	res, err := ToLayoutTimeE(layout, value, converters...)
+	if err != nil {
+		return defaultValue
+	}
+	return res
+}
+
+// ToLayoutTimeE converts any type of value to time.Time with a layout applied or returns an error.
+func ToLayoutTimeE(layout string, value interface{}, converters ...TimeConvert) (time.Time, error) {
+	for _, converter := range converters {
+		if result := converter(value); result != nil {
+			return *result, nil
+		}
+	}
+
+	switch v := value.(type) {
+	case time.Time:
+		return v, nil
+	case *time.Time:
+		return *v, nil
+	case string:
+		c := carbon.ParseByFormat(v, layout)
+		if c.Error != nil {
+			return time.Time{}, c.Error
+		}
+		return c.StdTime(), nil
+	default:
+		valueStr := ToString(v)
+		c := carbon.ParseByFormat(valueStr, layout)
+		if c.Error != nil {
+			return time.Time{}, c.Error
+		}
+		return c.StdTime(), nil
+	}
+}
+
+// ToTimeString converts a time.Time to a string with an optional format, ignoring errors.
+func ToTimeString(t time.Time, format ...string) string {
+	res, _ := ToTimeStringE(t, format...)
+	return res
+}
+
+// ToTimeStringE converts a time.Time to a string with an optional format or returns an error.
+func ToTimeStringE(t time.Time, format ...string) (string, error) {
 	c := carbon.CreateFromStdTime(t)
 	if c.Error != nil {
 		return "", c.Error
@@ -45,9 +128,23 @@ func ToTimeString(t time.Time, format ...string) (string, error) {
 	return c.String(), nil
 }
 
-// ToDuration converts any type of values to duration
-func ToDuration(value interface{}) (res time.Duration, err error) {
-	valueStr := ToValidString(value)
-	res, err = time.ParseDuration(valueStr)
-	return
+// ToDuration converts any type of value to time.Duration, ignoring errors.
+func ToDuration(value interface{}) time.Duration {
+	res, _ := ToDurationE(value)
+	return res
+}
+
+// ToDurationOrDefault converts any type of value to time.Duration or returns the provided default value if conversion fails.
+func ToDurationOrDefault(value interface{}, defaultValue time.Duration) time.Duration {
+	res, err := ToDurationE(value)
+	if err != nil {
+		return defaultValue
+	}
+	return res
+}
+
+// ToDurationE converts any type of value to time.Duration or returns an error.
+func ToDurationE(value interface{}) (time.Duration, error) {
+	valueStr := ToString(value)
+	return time.ParseDuration(valueStr)
 }
