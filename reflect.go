@@ -7,7 +7,14 @@ import (
 	"time"
 )
 
-type Caster func(value interface{}, asPtr bool) (reflect.Value, error)
+// Caster is a function type for custom type casting.
+type Caster func(value interface{}) reflect.Value
+
+// CasterE is a function type for custom type casting with error.
+type CasterE func(value interface{}) (reflect.Value, error)
+
+// CasterConvert is an interface for custom type casting.
+type CasterConvert func(value interface{}) reflect.Value
 
 var (
 	stringType   = reflect.TypeOf("")
@@ -33,45 +40,65 @@ var (
 	InvalidValue = reflect.Value{}
 )
 
-var casters = map[reflect.Type]Caster{
-	reflect.TypeOf(""):               castString,
-	reflect.TypeOf(false):            castBool,
-	reflect.TypeOf(0):                castInt,
-	reflect.TypeOf(int8(0)):          castInt8,
-	reflect.TypeOf(int16(0)):         castInt16,
-	reflect.TypeOf(int32(0)):         castInt32,
-	reflect.TypeOf(int64(0)):         castInt64,
-	reflect.TypeOf(uint(0)):          castUint,
-	reflect.TypeOf(uint8(0)):         castUint8,
-	reflect.TypeOf(uint16(0)):        castUint16,
-	reflect.TypeOf(uint32(0)):        castUint32,
-	reflect.TypeOf(uint64(0)):        castUint64,
-	reflect.TypeOf(float32(0)):       castFloat32,
-	reflect.TypeOf(float64(0)):       castFloat64,
-	reflect.TypeOf(time.Now()):       castTime,
-	reflect.TypeOf(time.Duration(0)): castTimeDuration,
+var casters = map[reflect.Type]CasterE{
+	stringType:   castStringE,
+	boolType:     castBoolE,
+	intType:      castIntE,
+	int8Type:     castInt8E,
+	int16Type:    castInt16E,
+	int32Type:    castInt32E,
+	int64Type:    castInt64E,
+	uintType:     castUintE,
+	uint8Type:    castUint8E,
+	uint16Type:   castUint16E,
+	uint32Type:   castUint32E,
+	uint64Type:   castUint64E,
+	float32Type:  castFloat32E,
+	float64Type:  castFloat64E,
+	timeType:     castTimeE,
+	durationType: castTimeDurationE,
 }
 
-func ToValue(value interface{}, to reflect.Type) (reflect.Value, error) {
-	asPtr := to.Kind() == reflect.Pointer
-	if asPtr {
-		to = to.Elem()
+// ToValue converts a value to a specified type using custom casters.
+func ToValue(value interface{}, to reflect.Type, converters ...CasterConvert) reflect.Value {
+	res, _ := ToValueE(value, to, converters...)
+	return res
+}
+
+// ToValueE converts a value to a specified type using custom casters with error.
+func ToValueE(value interface{}, to reflect.Type, converters ...CasterConvert) (reflect.Value, error) {
+	for _, converter := range converters {
+		if result := converter(value); result.IsValid() {
+			return result, nil
+		}
 	}
 
+	v := Indirect(value)
+
 	if caster, ok := casters[to]; ok {
-		return caster(value, asPtr)
+		return caster(v)
 	}
 
 	return InvalidValue, errors.New("casting not supported")
 }
 
-func ToJsonValue(value interface{}, to reflect.Type) (reflect.Value, error) {
-	asPtr := to.Kind() == reflect.Pointer
-	if asPtr {
-		to = to.Elem()
+// ToJsonValue converts a value to a specified type using JSON unmarshalling.
+func ToJsonValue(value interface{}, to reflect.Type, converters ...CasterConvert) reflect.Value {
+	res, _ := ToJsonValueE(value, to, converters...)
+	return res
+}
+
+// ToJsonValueE converts a value to a specified type using JSON unmarshalling with error.
+func ToJsonValueE(value interface{}, to reflect.Type, converters ...CasterConvert) (reflect.Value, error) {
+	for _, converter := range converters {
+		if result := converter(value); result.IsValid() {
+			return result, nil
+		}
 	}
 
-	jsonString, err := ToString(value)
+	v := Indirect(value)
+
+	jsonString, err := ToStringE(v)
 	if err != nil {
 		return InvalidValue, err
 	}
@@ -84,245 +111,258 @@ func ToJsonValue(value interface{}, to reflect.Type) (reflect.Value, error) {
 		return InvalidValue, err
 	}
 
-	if asPtr {
-		return jsonValuePtr, nil
-	}
-
 	return jsonValue, nil
 }
 
-func castString(value interface{}, asPtr bool) (reflect.Value, error) {
+func castString(value interface{}) reflect.Value {
+	res, _ := castStringE(value)
+	return res
+}
+
+func castStringE(value interface{}) (reflect.Value, error) {
 	var s string
 	var err error
 
 	if reflect.TypeOf(value) == timeType {
 		s = value.(time.Time).Format(time.RFC3339)
 	} else {
-		s, err = ToString(value)
+		s, err = ToStringE(value)
 		if err != nil {
 			return InvalidValue, err
 		}
 	}
 
-	if asPtr {
-		return reflect.ValueOf(&s), nil
-	}
-
 	return reflect.ValueOf(s), nil
 }
 
-func castBool(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToBool(value)
+func castBool(value interface{}) reflect.Value {
+	res, _ := castBoolE(value)
+	return res
+}
+
+func castBoolE(value interface{}) (reflect.Value, error) {
+	v, err := ToBoolE(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castInt(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToInt(value)
+func castInt(value interface{}) reflect.Value {
+	res, _ := castIntE(value)
+	return res
+}
+
+func castIntE(value interface{}) (reflect.Value, error) {
+	v, err := ToIntE(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castInt8(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToInt8(value)
+func castInt8(value interface{}) reflect.Value {
+	res, _ := castInt8E(value)
+	return res
+}
+
+func castInt8E(value interface{}) (reflect.Value, error) {
+	v, err := ToInt8E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castInt16(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToInt16(value)
+func castInt16(value interface{}) reflect.Value {
+	res, _ := castInt16E(value)
+	return res
+}
+
+func castInt16E(value interface{}) (reflect.Value, error) {
+	v, err := ToInt16E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castInt32(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToInt32(value)
+func castInt32(value interface{}) reflect.Value {
+	res, _ := castInt32E(value)
+	return res
+}
+
+func castInt32E(value interface{}) (reflect.Value, error) {
+	v, err := ToInt32E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castInt64(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToInt64(value)
+func castInt64(value interface{}) reflect.Value {
+	res, _ := castInt64E(value)
+	return res
+}
+
+func castInt64E(value interface{}) (reflect.Value, error) {
+	v, err := ToInt64E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castUint(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToUint(value)
+func castUint(value interface{}) reflect.Value {
+	res, _ := castUintE(value)
+	return res
+}
+
+func castUintE(value interface{}) (reflect.Value, error) {
+	v, err := ToUintE(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castUint8(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToUint8(value)
+func castUint8(value interface{}) reflect.Value {
+	res, _ := castUint8E(value)
+	return res
+}
+
+func castUint8E(value interface{}) (reflect.Value, error) {
+	v, err := ToUint8E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castUint16(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToUint16(value)
+func castUint16(value interface{}) reflect.Value {
+	res, _ := castUint16E(value)
+	return res
+}
+
+func castUint16E(value interface{}) (reflect.Value, error) {
+	v, err := ToUint16E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castUint32(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToUint32(value)
+func castUint32(value interface{}) reflect.Value {
+	res, _ := castUint32E(value)
+	return res
+}
+
+func castUint32E(value interface{}) (reflect.Value, error) {
+	v, err := ToUint32E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castUint64(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToUint64(value)
+func castUint64(value interface{}) reflect.Value {
+	res, _ := castUint64E(value)
+	return res
+}
+
+func castUint64E(value interface{}) (reflect.Value, error) {
+	v, err := ToUint64E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castFloat32(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToFloat32(value)
+func castFloat32(value interface{}) reflect.Value {
+	res, _ := castFloat32E(value)
+	return res
+}
+
+func castFloat32E(value interface{}) (reflect.Value, error) {
+	v, err := ToFloat32E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castFloat64(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToFloat64(value)
+func castFloat64(value interface{}) reflect.Value {
+	res, _ := castFloat64E(value)
+	return res
+}
+
+func castFloat64E(value interface{}) (reflect.Value, error) {
+	v, err := ToFloat64E(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castTime(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToTime(value)
+func castTime(value interface{}) reflect.Value {
+	res, _ := castTimeE(value)
+	return res
+}
+
+func castTimeE(value interface{}) (reflect.Value, error) {
+	v, err := ToTimeE(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
-func castTimeDuration(value interface{}, asPtr bool) (reflect.Value, error) {
-	v, err := ToDuration(value)
+func castTimeDuration(value interface{}) reflect.Value {
+	res, _ := castTimeDurationE(value)
+	return res
+}
+
+func castTimeDurationE(value interface{}) (reflect.Value, error) {
+	v, err := ToDurationE(value)
 	if err != nil {
 		return InvalidValue, err
-	}
-
-	if asPtr {
-		return reflect.ValueOf(&v), nil
 	}
 
 	return reflect.ValueOf(v), nil
 }
 
+// GetConvertType returns the reflect.Type of a value based on its conversion.
 func GetConvertType(value interface{}) reflect.Type {
 	if value == nil {
 		return nilType
 	}
 
 	// try to find the type
-	if _, err := ToTime(value); err == nil {
+	if _, err := ToTimeE(value); err == nil {
 		return timeType
 	}
-	if _, err := ToDuration(value); err == nil {
+	if _, err := ToDurationE(value); err == nil {
 		return durationType
 	}
-	if _, err := ToInt(value); err == nil {
-		if _, err := ToInt8(value); err == nil {
-			if _, err := ToInt16(value); err == nil {
-				if _, err := ToInt32(value); err == nil {
-					if _, err := ToInt64(value); err == nil {
+	if _, err := ToIntE(value); err == nil {
+		if _, err := ToInt8E(value); err == nil {
+			if _, err := ToInt16E(value); err == nil {
+				if _, err := ToInt32E(value); err == nil {
+					if _, err := ToInt64E(value); err == nil {
 						return int64Type
 					}
 					return int32Type
@@ -333,11 +373,11 @@ func GetConvertType(value interface{}) reflect.Type {
 		}
 		return intType
 	}
-	if _, err := ToUint(value); err == nil {
-		if _, err := ToUint8(value); err == nil {
-			if _, err := ToUint16(value); err == nil {
-				if _, err := ToUint32(value); err == nil {
-					if _, err := ToUint64(value); err == nil {
+	if _, err := ToUintE(value); err == nil {
+		if _, err := ToUint8E(value); err == nil {
+			if _, err := ToUint16E(value); err == nil {
+				if _, err := ToUint32E(value); err == nil {
+					if _, err := ToUint64E(value); err == nil {
 						return uint64Type
 					}
 					return uint32Type
@@ -348,16 +388,16 @@ func GetConvertType(value interface{}) reflect.Type {
 		}
 		return uintType
 	}
-	if _, err := ToFloat32(value); err == nil {
-		if _, err := ToFloat64(value); err == nil {
+	if _, err := ToFloat32E(value); err == nil {
+		if _, err := ToFloat64E(value); err == nil {
 			return float64Type
 		}
 		return float32Type
 	}
-	if _, err := ToBool(value); err == nil {
+	if _, err := ToBoolE(value); err == nil {
 		return boolType
 	}
-	if _, err := ToString(value); err == nil {
+	if _, err := ToStringE(value); err == nil {
 		return stringType
 	}
 
