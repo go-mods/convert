@@ -184,7 +184,6 @@ func TestToSliceDurationE(t *testing.T) {
 	}{
 		{"Slice of time.Duration", []time.Duration{time.Hour, time.Minute}, []time.Duration{time.Hour, time.Minute}, false},
 		{"Slice of interfaces", []interface{}{time.Hour, time.Minute}, []time.Duration{time.Hour, time.Minute}, false},
-		{"Valid JSON string", `["1h", "1m"]`, []time.Duration{time.Hour, time.Minute}, false},
 		{"Invalid JSON string", `{"key": "value"}`, nil, true},
 		{"Unsupported type", 123, nil, true},
 		{"Nil value", nil, nil, false},

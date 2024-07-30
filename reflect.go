@@ -32,7 +32,6 @@ var (
 	float32Type  = reflect.TypeOf(float32(0))
 	float64Type  = reflect.TypeOf(float64(0))
 	timeType     = reflect.TypeOf((*time.Time)(nil)).Elem()
-	timePtrType  = reflect.TypeOf((*time.Time)(nil))
 	durationType = reflect.TypeOf(time.Duration(0))
 	nilType      = reflect.TypeOf(nil)
 	InvalidType  = reflect.TypeOf(reflect.Value{})
@@ -114,10 +113,10 @@ func ToJsonValueE(value interface{}, to reflect.Type, converters ...CasterConver
 	return jsonValue, nil
 }
 
-func castString(value interface{}) reflect.Value {
-	res, _ := castStringE(value)
-	return res
-}
+//func castString(value interface{}) reflect.Value {
+//	res, _ := castStringE(value)
+//	return res
+//}
 
 func castStringE(value interface{}) (reflect.Value, error) {
 	var s string
@@ -135,10 +134,10 @@ func castStringE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(s), nil
 }
 
-func castBool(value interface{}) reflect.Value {
-	res, _ := castBoolE(value)
-	return res
-}
+//func castBool(value interface{}) reflect.Value {
+//	res, _ := castBoolE(value)
+//	return res
+//}
 
 func castBoolE(value interface{}) (reflect.Value, error) {
 	v, err := ToBoolE(value)
@@ -149,10 +148,10 @@ func castBoolE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castInt(value interface{}) reflect.Value {
-	res, _ := castIntE(value)
-	return res
-}
+//func castInt(value interface{}) reflect.Value {
+//	res, _ := castIntE(value)
+//	return res
+//}
 
 func castIntE(value interface{}) (reflect.Value, error) {
 	v, err := ToIntE(value)
@@ -163,10 +162,10 @@ func castIntE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castInt8(value interface{}) reflect.Value {
-	res, _ := castInt8E(value)
-	return res
-}
+//func castInt8(value interface{}) reflect.Value {
+//	res, _ := castInt8E(value)
+//	return res
+//}
 
 func castInt8E(value interface{}) (reflect.Value, error) {
 	v, err := ToInt8E(value)
@@ -177,10 +176,10 @@ func castInt8E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castInt16(value interface{}) reflect.Value {
-	res, _ := castInt16E(value)
-	return res
-}
+//func castInt16(value interface{}) reflect.Value {
+//	res, _ := castInt16E(value)
+//	return res
+//}
 
 func castInt16E(value interface{}) (reflect.Value, error) {
 	v, err := ToInt16E(value)
@@ -191,10 +190,10 @@ func castInt16E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castInt32(value interface{}) reflect.Value {
-	res, _ := castInt32E(value)
-	return res
-}
+//func castInt32(value interface{}) reflect.Value {
+//	res, _ := castInt32E(value)
+//	return res
+//}
 
 func castInt32E(value interface{}) (reflect.Value, error) {
 	v, err := ToInt32E(value)
@@ -205,10 +204,10 @@ func castInt32E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castInt64(value interface{}) reflect.Value {
-	res, _ := castInt64E(value)
-	return res
-}
+//func castInt64(value interface{}) reflect.Value {
+//	res, _ := castInt64E(value)
+//	return res
+//}
 
 func castInt64E(value interface{}) (reflect.Value, error) {
 	v, err := ToInt64E(value)
@@ -219,10 +218,10 @@ func castInt64E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castUint(value interface{}) reflect.Value {
-	res, _ := castUintE(value)
-	return res
-}
+//func castUint(value interface{}) reflect.Value {
+//	res, _ := castUintE(value)
+//	return res
+//}
 
 func castUintE(value interface{}) (reflect.Value, error) {
 	v, err := ToUintE(value)
@@ -233,10 +232,10 @@ func castUintE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castUint8(value interface{}) reflect.Value {
-	res, _ := castUint8E(value)
-	return res
-}
+//func castUint8(value interface{}) reflect.Value {
+//	res, _ := castUint8E(value)
+//	return res
+//}
 
 func castUint8E(value interface{}) (reflect.Value, error) {
 	v, err := ToUint8E(value)
@@ -247,10 +246,10 @@ func castUint8E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castUint16(value interface{}) reflect.Value {
-	res, _ := castUint16E(value)
-	return res
-}
+//func castUint16(value interface{}) reflect.Value {
+//	res, _ := castUint16E(value)
+//	return res
+//}
 
 func castUint16E(value interface{}) (reflect.Value, error) {
 	v, err := ToUint16E(value)
@@ -261,10 +260,10 @@ func castUint16E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castUint32(value interface{}) reflect.Value {
-	res, _ := castUint32E(value)
-	return res
-}
+//func castUint32(value interface{}) reflect.Value {
+//	res, _ := castUint32E(value)
+//	return res
+//}
 
 func castUint32E(value interface{}) (reflect.Value, error) {
 	v, err := ToUint32E(value)
@@ -275,10 +274,10 @@ func castUint32E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castUint64(value interface{}) reflect.Value {
-	res, _ := castUint64E(value)
-	return res
-}
+//func castUint64(value interface{}) reflect.Value {
+//	res, _ := castUint64E(value)
+//	return res
+//}
 
 func castUint64E(value interface{}) (reflect.Value, error) {
 	v, err := ToUint64E(value)
@@ -289,10 +288,10 @@ func castUint64E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castFloat32(value interface{}) reflect.Value {
-	res, _ := castFloat32E(value)
-	return res
-}
+//func castFloat32(value interface{}) reflect.Value {
+//	res, _ := castFloat32E(value)
+//	return res
+//}
 
 func castFloat32E(value interface{}) (reflect.Value, error) {
 	v, err := ToFloat32E(value)
@@ -303,10 +302,10 @@ func castFloat32E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castFloat64(value interface{}) reflect.Value {
-	res, _ := castFloat64E(value)
-	return res
-}
+//func castFloat64(value interface{}) reflect.Value {
+//	res, _ := castFloat64E(value)
+//	return res
+//}
 
 func castFloat64E(value interface{}) (reflect.Value, error) {
 	v, err := ToFloat64E(value)
@@ -317,10 +316,10 @@ func castFloat64E(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castTime(value interface{}) reflect.Value {
-	res, _ := castTimeE(value)
-	return res
-}
+//func castTime(value interface{}) reflect.Value {
+//	res, _ := castTimeE(value)
+//	return res
+//}
 
 func castTimeE(value interface{}) (reflect.Value, error) {
 	v, err := ToTimeE(value)
@@ -331,10 +330,10 @@ func castTimeE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
-func castTimeDuration(value interface{}) reflect.Value {
-	res, _ := castTimeDurationE(value)
-	return res
-}
+//func castTimeDuration(value interface{}) reflect.Value {
+//	res, _ := castTimeDurationE(value)
+//	return res
+//}
 
 func castTimeDurationE(value interface{}) (reflect.Value, error) {
 	v, err := ToDurationE(value)
