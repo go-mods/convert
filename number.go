@@ -261,7 +261,6 @@ type Int8ArrayConverter func(value interface{}) *[]int8
 //	convertedValue := ToInt16Array(someValue, customInt16ArrayConverter)
 type Int16ArrayConverter func(value interface{}) *[]int16
 
-
 // Int32ArrayConverter is a function type for custom int32 array conversion.
 // It takes any value and returns a pointer to an array of int32 if conversion succeeds, or nil if it fails.
 // This allows for flexible, user-defined conversion logic.
@@ -431,35 +430,37 @@ func ToIntE(value interface{}, converters ...IntConverter) (int, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return int(res64), nil
-		} else if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return int(resU64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToIntE(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to int failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to int failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int(reflect.ValueOf(v).Int()), nil
+		return int(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int(reflect.ValueOf(v).Uint()), nil
+		return int(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return int(reflect.ValueOf(v).Float()), nil
+		return int(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToIntE(valueStr)
 	}
 }
@@ -498,35 +499,37 @@ func ToInt8E(value interface{}, converters ...Int8Converter) (int8, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return int8(res64), nil
-		} else if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return int8(resU64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int8(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt8E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to int8 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to int8 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int8(reflect.ValueOf(v).Int()), nil
+		return int8(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int8(reflect.ValueOf(v).Uint()), nil
+		return int8(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return int8(reflect.ValueOf(v).Float()), nil
+		return int8(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToInt8E(valueStr)
 	}
 }
@@ -565,35 +568,37 @@ func ToInt16E(value interface{}, converters ...Int16Converter) (int16, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return int16(res64), nil
-		} else if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return int16(resU64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int16(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt16E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to int16 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to int16 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int16(reflect.ValueOf(v).Int()), nil
+		return int16(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int16(reflect.ValueOf(v).Uint()), nil
+		return int16(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return int16(reflect.ValueOf(v).Float()), nil
+		return int16(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToInt16E(valueStr)
 	}
 }
@@ -632,35 +637,37 @@ func ToInt32E(value interface{}, converters ...Int32Converter) (int32, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return int32(res64), nil
-		} else if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return int32(resU64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int32(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt32E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to int32 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to int32 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int32(reflect.ValueOf(v).Int()), nil
+		return int32(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int32(reflect.ValueOf(v).Uint()), nil
+		return int32(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return int32(reflect.ValueOf(v).Float()), nil
+		return int32(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToInt32E(valueStr)
 	}
 }
@@ -699,35 +706,37 @@ func ToInt64E(value interface{}, converters ...Int64Converter) (int64, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return res64, nil
-		} else if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return int64(resU64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int64(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt64E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to int64 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to int64 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return reflect.ValueOf(v).Int(), nil
+		return reflect.ValueOf(n).Int(), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int64(reflect.ValueOf(v).Uint()), nil
+		return int64(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return int64(reflect.ValueOf(v).Float()), nil
+		return int64(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToInt64E(valueStr)
 	}
 }
@@ -766,35 +775,37 @@ func ToUintE(value interface{}, converters ...UintConverter) (uint, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return uint(resU64), nil
-		} else if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return uint(res64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUintE(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to uint failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to uint failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint(reflect.ValueOf(v).Int()), nil
+		return uint(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint(reflect.ValueOf(v).Uint()), nil
+		return uint(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return uint(reflect.ValueOf(v).Float()), nil
+		return uint(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToUintE(valueStr)
 	}
 }
@@ -833,35 +844,37 @@ func ToUint8E(value interface{}, converters ...Uint8Converter) (uint8, error) {
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return uint8(resU64), nil
-		} else if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return uint8(res64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint8(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint8E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to uint8 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to uint8 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint8(reflect.ValueOf(v).Int()), nil
+		return uint8(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint8(reflect.ValueOf(v).Uint()), nil
+		return uint8(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return uint8(reflect.ValueOf(v).Float()), nil
+		return uint8(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToUint8E(valueStr)
 	}
 }
@@ -900,35 +913,37 @@ func ToUint16E(value interface{}, converters ...Uint16Converter) (uint16, error)
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return uint16(resU64), nil
-		} else if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return uint16(res64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint16(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint16E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to uint16 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to uint16 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint16(reflect.ValueOf(v).Int()), nil
+		return uint16(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint16(reflect.ValueOf(v).Uint()), nil
+		return uint16(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return uint16(reflect.ValueOf(v).Float()), nil
+		return uint16(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToUint16E(valueStr)
 	}
 }
@@ -967,35 +982,37 @@ func ToUint32E(value interface{}, converters ...Uint32Converter) (uint32, error)
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return uint32(resU64), nil
-		} else if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return uint32(res64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint32(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint32E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to uint32 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to uint32 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint32(reflect.ValueOf(v).Int()), nil
+		return uint32(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint32(reflect.ValueOf(v).Uint()), nil
+		return uint32(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return uint32(reflect.ValueOf(v).Float()), nil
+		return uint32(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToUint32E(valueStr)
 	}
 }
@@ -1034,35 +1051,37 @@ func ToUint64E(value interface{}, converters ...Uint64Converter) (uint64, error)
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resU64, err := strconv.ParseUint(v, 0, 64); err == nil {
+		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return resU64, nil
-		} else if res64, err := strconv.ParseInt(v, 0, 64); err == nil {
+		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return uint64(res64), nil
-		} else if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint64(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint64E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to uint64 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to uint64 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint64(reflect.ValueOf(v).Int()), nil
+		return uint64(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint64(reflect.ValueOf(v).Uint()), nil
+		return uint64(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
-		return uint64(reflect.ValueOf(v).Float()), nil
+		return uint64(reflect.ValueOf(n).Float()), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToUint64E(valueStr)
 	}
 }
@@ -1101,33 +1120,35 @@ func ToFloat32E(value interface{}, converters ...Float32Converter) (float32, err
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return float32(resF64), nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToFloat32E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to float32 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to float32 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return float32(reflect.ValueOf(v).Int()), nil
+		return float32(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return float32(reflect.ValueOf(v).Uint()), nil
+		return float32(reflect.ValueOf(n).Uint()), nil
 	case float32:
-		return v, nil
+		return n, nil
 	case float64:
-		return float32(v), nil
+		return float32(n), nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToFloat32E(valueStr)
 	}
 }
@@ -1166,33 +1187,35 @@ func ToFloat64E(value interface{}, converters ...Float64Converter) (float64, err
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch n := i.(type) {
 	case string:
-		if len(v) == 0 {
+		if len(n) == 0 {
 			return 0, nil
 		}
-		if resF64, err := strconv.ParseFloat(v, 64); err == nil {
+		if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return resF64, nil
-		} else if resBool, err := strconv.ParseBool(v); err == nil {
+		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToFloat64E(resBool)
 		} else {
-			return 0, fmt.Errorf("convert: string \"%s\" to float64 failed", v)
+			return 0, fmt.Errorf("convert: string \"%s\" to float64 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return float64(reflect.ValueOf(v).Int()), nil
+		return float64(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return float64(reflect.ValueOf(v).Uint()), nil
+		return float64(reflect.ValueOf(n).Uint()), nil
 	case float32:
-		return float64(v), nil
+		return float64(n), nil
 	case float64:
-		return v, nil
+		return n, nil
 	case bool:
-		if v {
+		if n {
 			return 1, nil
 		}
 		return 0, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(n)
 		return ToFloat64E(valueStr)
 	}
 }
