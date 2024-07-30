@@ -63,19 +63,21 @@ func ToTimeE(value interface{}, converters ...TimeConverter) (time.Time, error) 
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch t := i.(type) {
 	case time.Time:
-		return v, nil
+		return t, nil
 	case *time.Time:
-		return *v, nil
+		return *t, nil
 	case string:
-		c := carbon.Parse(v)
+		c := carbon.Parse(t)
 		if c.Error != nil {
 			return time.Time{}, c.Error
 		}
 		return c.StdTime(), nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(t)
 		return ToTimeE(valueStr, converters...)
 	}
 }
@@ -103,19 +105,21 @@ func ToLayoutTimeE(layout string, value interface{}, converters ...TimeConverter
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch t := i.(type) {
 	case time.Time:
-		return v, nil
+		return t, nil
 	case *time.Time:
-		return *v, nil
+		return *t, nil
 	case string:
-		c := carbon.ParseByFormat(v, layout)
+		c := carbon.ParseByFormat(t, layout)
 		if c.Error != nil {
 			return time.Time{}, c.Error
 		}
 		return c.StdTime(), nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(t)
 		c := carbon.ParseByFormat(valueStr, layout)
 		if c.Error != nil {
 			return time.Time{}, c.Error
@@ -169,19 +173,21 @@ func ToDurationE(value interface{}, converters ...DurationConverter) (time.Durat
 		}
 	}
 
-	switch v := value.(type) {
+	i := Indirect(value)
+
+	switch t := i.(type) {
 	case time.Duration:
-		return v, nil
+		return t, nil
 	case *time.Duration:
-		return *v, nil
+		return *t, nil
 	case string:
-		d, err := time.ParseDuration(v)
+		d, err := time.ParseDuration(t)
 		if err != nil {
 			return 0, err
 		}
 		return d, nil
 	default:
-		valueStr := ToString(v)
+		valueStr := ToString(t)
 		return ToDurationE(valueStr, converters...)
 	}
 }
