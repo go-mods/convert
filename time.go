@@ -1,11 +1,12 @@
 package convert
 
 import (
-	"github.com/golang-module/carbon/v2"
 	"time"
+
+	"github.com/golang-module/carbon/v2"
 )
 
-// TimeConvert is a function type that converts any value to a pointer to time.Time.
+// TimeConverter is a function type that converts any value to a pointer to time.Time.
 // If the conversion fails, it returns nil.
 // This allows for custom conversion logic to be implemented and passed to conversion functions.
 //
@@ -20,16 +21,33 @@ import (
 //	}
 //
 //	result := ToTimeE(myCustomValue, customConverter)
-type TimeConvert func(value interface{}) *time.Time
+type TimeConverter func(value interface{}) *time.Time
+
+// DurationConverter is a function type that converts any value to a pointer to time.Duration.
+// If the conversion fails, it returns nil.
+// This allows for custom conversion logic to be implemented and passed to conversion functions.
+//
+// Examples:
+//
+//	customConverter := func(value interface{}) *time.Duration {
+//		if v, ok := value.(CustomType); ok {
+//			d := v.CustomToDuration()
+//			return &d
+//		}
+//		return nil
+//	}
+//
+//	result := ToDurationE(myCustomValue, customConverter)
+type DurationConverter func(value interface{}) *time.Duration
 
 // ToTime converts any type of value to time.Time, ignoring errors.
-func ToTime(value interface{}, converters ...TimeConvert) time.Time {
+func ToTime(value interface{}, converters ...TimeConverter) time.Time {
 	res, _ := ToTimeE(value, converters...)
 	return res
 }
 
 // ToTimeOrDefault converts any type of value to time.Time or returns the provided default value if conversion fails.
-func ToTimeOrDefault(value interface{}, defaultValue time.Time, converters ...TimeConvert) time.Time {
+func ToTimeOrDefault(value interface{}, defaultValue time.Time, converters ...TimeConverter) time.Time {
 	res, err := ToTimeE(value, converters...)
 	if err != nil {
 		return defaultValue
@@ -38,7 +56,7 @@ func ToTimeOrDefault(value interface{}, defaultValue time.Time, converters ...Ti
 }
 
 // ToTimeE converts any type of value to time.Time or returns an error.
-func ToTimeE(value interface{}, converters ...TimeConvert) (time.Time, error) {
+func ToTimeE(value interface{}, converters ...TimeConverter) (time.Time, error) {
 	for _, converter := range converters {
 		if result := converter(value); result != nil {
 			return *result, nil
@@ -63,13 +81,13 @@ func ToTimeE(value interface{}, converters ...TimeConvert) (time.Time, error) {
 }
 
 // ToLayoutTime converts any type of value to time.Time with a layout applied, ignoring errors.
-func ToLayoutTime(layout string, value interface{}, converters ...TimeConvert) time.Time {
+func ToLayoutTime(layout string, value interface{}, converters ...TimeConverter) time.Time {
 	res, _ := ToLayoutTimeE(layout, value, converters...)
 	return res
 }
 
 // ToLayoutTimeOrDefault converts any type of value to time.Time with a layout applied or returns the provided default value if conversion fails.
-func ToLayoutTimeOrDefault(layout string, value interface{}, defaultValue time.Time, converters ...TimeConvert) time.Time {
+func ToLayoutTimeOrDefault(layout string, value interface{}, defaultValue time.Time, converters ...TimeConverter) time.Time {
 	res, err := ToLayoutTimeE(layout, value, converters...)
 	if err != nil {
 		return defaultValue
@@ -78,7 +96,7 @@ func ToLayoutTimeOrDefault(layout string, value interface{}, defaultValue time.T
 }
 
 // ToLayoutTimeE converts any type of value to time.Time with a layout applied or returns an error.
-func ToLayoutTimeE(layout string, value interface{}, converters ...TimeConvert) (time.Time, error) {
+func ToLayoutTimeE(layout string, value interface{}, converters ...TimeConverter) (time.Time, error) {
 	for _, converter := range converters {
 		if result := converter(value); result != nil {
 			return *result, nil
@@ -129,14 +147,14 @@ func ToTimeStringE(t time.Time, format ...string) (string, error) {
 }
 
 // ToDuration converts any type of value to time.Duration, ignoring errors.
-func ToDuration(value interface{}) time.Duration {
-	res, _ := ToDurationE(value)
+func ToDuration(value interface{}, converters ...DurationConverter) time.Duration {
+	res, _ := ToDurationE(value, converters...)
 	return res
 }
 
 // ToDurationOrDefault converts any type of value to time.Duration or returns the provided default value if conversion fails.
-func ToDurationOrDefault(value interface{}, defaultValue time.Duration) time.Duration {
-	res, err := ToDurationE(value)
+func ToDurationOrDefault(value interface{}, defaultValue time.Duration, converters ...DurationConverter) time.Duration {
+	res, err := ToDurationE(value, converters...)
 	if err != nil {
 		return defaultValue
 	}
@@ -144,7 +162,26 @@ func ToDurationOrDefault(value interface{}, defaultValue time.Duration) time.Dur
 }
 
 // ToDurationE converts any type of value to time.Duration or returns an error.
-func ToDurationE(value interface{}) (time.Duration, error) {
-	valueStr := ToString(value)
-	return time.ParseDuration(valueStr)
+func ToDurationE(value interface{}, converters ...DurationConverter) (time.Duration, error) {
+	for _, converter := range converters {
+		if result := converter(value); result != nil {
+			return *result, nil
+		}
+	}
+
+	switch v := value.(type) {
+	case time.Duration:
+		return v, nil
+	case *time.Duration:
+		return *v, nil
+	case string:
+		d, err := time.ParseDuration(v)
+		if err != nil {
+			return 0, err
+		}
+		return d, nil
+	default:
+		valueStr := ToString(v)
+		return ToDurationE(valueStr, converters...)
+	}
 }

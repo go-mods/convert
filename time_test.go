@@ -8,6 +8,7 @@ import (
 )
 
 var now = time.Date(2022, 7, 2, 11, 45, 2, 651387237, time.UTC)
+var nowStr = carbon.CreateFromStdTime(now, "UTC").ToRfc3339String("UTC")
 var nowDate = time.Date(2022, 7, 2, 0, 0, 0, 0, time.UTC)
 var nowDateTime = time.Date(2022, 7, 2, 11, 45, 2, 0, time.UTC)
 
