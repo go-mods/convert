@@ -3,7 +3,7 @@ package convert
 import (
 	"time"
 
-	"github.com/golang-module/carbon/v2"
+	"github.com/dromara/carbon/v2"
 )
 
 // TimeConverter is a function type that converts any value to a pointer to time.Time.
