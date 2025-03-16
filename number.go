@@ -414,6 +414,191 @@ type Float32ArrayConverter func(value interface{}) *[]float32
 //	convertedValue := ToFloat64Array(someValue, customFloat64ArrayConverter)
 type Float64ArrayConverter func(value interface{}) *[]float64
 
+// safeUint8 checks if a uint64 value can be converted to uint8 without overflow
+func safeUint8(value uint64) (uint8, error) {
+	if value > uint64(^uint8(0)) {
+		return 0, fmt.Errorf("convert: value %d overflows uint8", value)
+	}
+	return uint8(value), nil
+}
+
+// safeUint16 checks if a uint64 value can be converted to uint16 without overflow
+func safeUint16(value uint64) (uint16, error) {
+	if value > uint64(^uint16(0)) {
+		return 0, fmt.Errorf("convert: value %d overflows uint16", value)
+	}
+	return uint16(value), nil
+}
+
+// safeUint32 checks if a uint64 value can be converted to uint32 without overflow
+func safeUint32(value uint64) (uint32, error) {
+	if value > uint64(^uint32(0)) {
+		return 0, fmt.Errorf("convert: value %d overflows uint32", value)
+	}
+	return uint32(value), nil
+}
+
+// safeInt8 checks if an int64 value can be converted to int8 without overflow
+func safeInt8(value int64) (int8, error) {
+	const minInt8 = int64(-128)
+	const maxInt8 = int64(127)
+
+	if value < minInt8 || value > maxInt8 {
+		return 0, fmt.Errorf("convert: value %d overflows int8", value)
+	}
+	return int8(value), nil
+}
+
+// safeInt16 checks if an int64 value can be converted to int16 without overflow
+func safeInt16(value int64) (int16, error) {
+	const minInt16 = int64(-32768)
+	const maxInt16 = int64(32767)
+
+	if value < minInt16 || value > maxInt16 {
+		return 0, fmt.Errorf("convert: value %d overflows int16", value)
+	}
+	return int16(value), nil
+}
+
+// safeInt32 checks if an int64 value can be converted to int32 without overflow
+func safeInt32(value int64) (int32, error) {
+	const minInt32 = int64(-2147483648)
+	const maxInt32 = int64(2147483647)
+
+	if value < minInt32 || value > maxInt32 {
+		return 0, fmt.Errorf("convert: value %d overflows int32", value)
+	}
+	return int32(value), nil
+}
+
+// safeInt checks if an int64 value can be converted to int without overflow
+func safeInt(value int64) (int, error) {
+	// On 32-bit systems, int is equivalent to int32
+	// On 64-bit systems, int is equivalent to int64
+	// We use a conservative approach for 32-bit systems
+	const minInt32 = int64(-2147483648)
+	const maxInt32 = int64(2147483647)
+
+	if strconv.IntSize == 32 && (value < minInt32 || value > maxInt32) {
+		return 0, fmt.Errorf("convert: value %d overflows int on 32-bit system", value)
+	}
+	return int(value), nil
+}
+
+// safeUint checks if a uint64 value can be converted to uint without overflow
+func safeUint(value uint64) (uint, error) {
+	// On 32-bit systems, uint is equivalent to uint32
+	// On 64-bit systems, uint is equivalent to uint64
+	// We use a conservative approach for 32-bit systems
+	const maxUint32 = uint64(^uint32(0))
+
+	if strconv.IntSize == 32 && value > maxUint32 {
+		return 0, fmt.Errorf("convert: value %d overflows uint on 32-bit system", value)
+	}
+	return uint(value), nil
+}
+
+// safeIntToUint8 checks if an int64 value can be converted to uint8 without overflow
+func safeIntToUint8(value int64) (uint8, error) {
+	if value < 0 || value > int64(255) {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to uint8", value)
+	}
+	return uint8(value), nil
+}
+
+// safeIntToUint16 checks if an int64 value can be converted to uint16 without overflow
+func safeIntToUint16(value int64) (uint16, error) {
+	if value < 0 || value > int64(65535) {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to uint16", value)
+	}
+	return uint16(value), nil
+}
+
+// safeIntToUint32 checks if an int64 value can be converted to uint32 without overflow
+func safeIntToUint32(value int64) (uint32, error) {
+	if value < 0 || value > int64(4294967295) {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to uint32", value)
+	}
+	return uint32(value), nil
+}
+
+// safeIntToUint64 checks if an int64 value can be converted to uint64 without overflow
+func safeIntToUint64(value int64) (uint64, error) {
+	if value < 0 {
+		return 0, fmt.Errorf("convert: negative value %d cannot be converted to uint64", value)
+	}
+	return uint64(value), nil
+}
+
+// safeIntToUint checks if an int64 value can be converted to uint without overflow
+func safeIntToUint(value int64) (uint, error) {
+	if value < 0 {
+		return 0, fmt.Errorf("convert: negative value %d cannot be converted to uint", value)
+	}
+
+	// On 32-bit systems, uint is equivalent to uint32
+	if strconv.IntSize == 32 && value > int64(^uint32(0)) {
+		return 0, fmt.Errorf("convert: value %d overflows uint on 32-bit system", value)
+	}
+
+	return uint(value), nil
+}
+
+// safeUintToInt8 checks if a uint64 value can be converted to int8 without overflow
+func safeUintToInt8(value uint64) (int8, error) {
+	const maxInt8 = uint64(127)
+
+	if value > maxInt8 {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to int8", value)
+	}
+	return int8(value), nil
+}
+
+// safeUintToInt16 checks if a uint64 value can be converted to int16 without overflow
+func safeUintToInt16(value uint64) (int16, error) {
+	const maxInt16 = uint64(32767)
+
+	if value > maxInt16 {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to int16", value)
+	}
+	return int16(value), nil
+}
+
+// safeUintToInt32 checks if a uint64 value can be converted to int32 without overflow
+func safeUintToInt32(value uint64) (int32, error) {
+	const maxInt32 = uint64(2147483647)
+
+	if value > maxInt32 {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to int32", value)
+	}
+	return int32(value), nil
+}
+
+// safeUintToInt64 checks if a uint64 value can be converted to int64 without overflow
+func safeUintToInt64(value uint64) (int64, error) {
+	const maxInt64 = uint64(9223372036854775807)
+
+	if value > maxInt64 {
+		return 0, fmt.Errorf("convert: value %d cannot be converted to int64", value)
+	}
+	return int64(value), nil
+}
+
+// safeUintToInt checks if a uint64 value can be converted to int without overflow
+func safeUintToInt(value uint64) (int, error) {
+	// On 32-bit systems, int is equivalent to int32
+	const maxInt32 = uint64(2147483647)
+	const maxInt64 = uint64(9223372036854775807)
+
+	if strconv.IntSize == 32 && value > maxInt32 {
+		return 0, fmt.Errorf("convert: value %d overflows int on 32-bit system", value)
+	} else if value > maxInt64 {
+		return 0, fmt.Errorf("convert: value %d overflows int64", value)
+	}
+
+	return int(value), nil
+}
+
 // ToIntE converts any type of value to int or returns an error.
 // It handles various types including:
 //   - string, []byte, nil, bool
@@ -438,9 +623,9 @@ func ToIntE(value interface{}, converters ...IntConverter) (int, error) {
 			return 0, nil
 		}
 		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return int(res64), nil
+			return safeInt(res64)
 		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return int(resU64), nil
+			return safeUintToInt(resU64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
@@ -451,7 +636,7 @@ func ToIntE(value interface{}, converters ...IntConverter) (int, error) {
 	case int, int8, int16, int32, int64:
 		return int(reflect.ValueOf(n).Int()), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int(reflect.ValueOf(n).Uint()), nil
+		return safeUintToInt(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return int(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -507,10 +692,13 @@ func ToInt8E(value interface{}, converters ...Int8Converter) (int8, error) {
 			return 0, nil
 		}
 		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return int8(res64), nil
+			return safeInt8(res64)
 		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return int8(resU64), nil
+			return safeUintToInt8(resU64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^int8(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows int8", resF64)
+			}
 			return int8(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt8E(resBool)
@@ -518,9 +706,9 @@ func ToInt8E(value interface{}, converters ...Int8Converter) (int8, error) {
 			return 0, fmt.Errorf("convert: string \"%s\" to int8 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int8(reflect.ValueOf(n).Int()), nil
+		return safeInt8(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int8(reflect.ValueOf(n).Uint()), nil
+		return safeUintToInt8(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return int8(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -576,10 +764,16 @@ func ToInt16E(value interface{}, converters ...Int16Converter) (int16, error) {
 			return 0, nil
 		}
 		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return int16(res64), nil
+			return safeInt16(res64)
 		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
+			if resU64 > uint64(32767) {
+				return 0, fmt.Errorf("convert: value %d overflows int16", resU64)
+			}
 			return int16(resU64), nil
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^int16(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows int16", resF64)
+			}
 			return int16(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt16E(resBool)
@@ -587,9 +781,9 @@ func ToInt16E(value interface{}, converters ...Int16Converter) (int16, error) {
 			return 0, fmt.Errorf("convert: string \"%s\" to int16 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int16(reflect.ValueOf(n).Int()), nil
+		return safeInt16(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int16(reflect.ValueOf(n).Uint()), nil
+		return safeUintToInt16(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return int16(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -645,10 +839,13 @@ func ToInt32E(value interface{}, converters ...Int32Converter) (int32, error) {
 			return 0, nil
 		}
 		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return int32(res64), nil
+			return safeInt32(res64)
 		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return int32(resU64), nil
+			return safeUintToInt32(resU64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^int32(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows int32", resF64)
+			}
 			return int32(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToInt32E(resBool)
@@ -656,9 +853,9 @@ func ToInt32E(value interface{}, converters ...Int32Converter) (int32, error) {
 			return 0, fmt.Errorf("convert: string \"%s\" to int32 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return int32(reflect.ValueOf(n).Int()), nil
+		return safeInt32(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int32(reflect.ValueOf(n).Uint()), nil
+		return safeUintToInt32(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return int32(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -716,7 +913,7 @@ func ToInt64E(value interface{}, converters ...Int64Converter) (int64, error) {
 		if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
 			return res64, nil
 		} else if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return int64(resU64), nil
+			return safeUintToInt64(resU64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return int64(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
@@ -727,7 +924,7 @@ func ToInt64E(value interface{}, converters ...Int64Converter) (int64, error) {
 	case int, int8, int16, int32, int64:
 		return reflect.ValueOf(n).Int(), nil
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return int64(reflect.ValueOf(n).Uint()), nil
+		return safeUintToInt64(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return int64(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -783,9 +980,9 @@ func ToUintE(value interface{}, converters ...UintConverter) (uint, error) {
 			return 0, nil
 		}
 		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return uint(resU64), nil
+			return safeUint(resU64)
 		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return uint(res64), nil
+			return safeIntToUint(res64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
@@ -794,9 +991,9 @@ func ToUintE(value interface{}, converters ...UintConverter) (uint, error) {
 			return 0, fmt.Errorf("convert: string \"%s\" to uint failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint(reflect.ValueOf(n).Int()), nil
+		return safeIntToUint(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint(reflect.ValueOf(n).Uint()), nil
+		return safeUint(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return uint(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -852,10 +1049,13 @@ func ToUint8E(value interface{}, converters ...Uint8Converter) (uint8, error) {
 			return 0, nil
 		}
 		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return uint8(resU64), nil
+			return safeUint8(resU64)
 		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return uint8(res64), nil
+			return safeIntToUint8(res64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^uint8(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows uint8", resF64)
+			}
 			return uint8(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint8E(resBool)
@@ -863,9 +1063,9 @@ func ToUint8E(value interface{}, converters ...Uint8Converter) (uint8, error) {
 			return 0, fmt.Errorf("convert: string \"%s\" to uint8 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint8(reflect.ValueOf(n).Int()), nil
+		return safeIntToUint8(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint8(reflect.ValueOf(n).Uint()), nil
+		return safeUint8(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return uint8(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -921,10 +1121,19 @@ func ToUint16E(value interface{}, converters ...Uint16Converter) (uint16, error)
 			return 0, nil
 		}
 		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return uint16(resU64), nil
+			return safeUint16(resU64)
 		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
+			if res64 < 0 {
+				return 0, fmt.Errorf("convert: negative value %d cannot be converted to uint16", res64)
+			}
+			if res64 > int64(65535) {
+				return 0, fmt.Errorf("convert: value %d overflows uint16", res64)
+			}
 			return uint16(res64), nil
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^uint16(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows uint16", resF64)
+			}
 			return uint16(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint16E(resBool)
@@ -932,9 +1141,9 @@ func ToUint16E(value interface{}, converters ...Uint16Converter) (uint16, error)
 			return 0, fmt.Errorf("convert: string \"%s\" to uint16 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint16(reflect.ValueOf(n).Int()), nil
+		return safeIntToUint16(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint16(reflect.ValueOf(n).Uint()), nil
+		return safeUint16(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return uint16(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -990,10 +1199,13 @@ func ToUint32E(value interface{}, converters ...Uint32Converter) (uint32, error)
 			return 0, nil
 		}
 		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
-			return uint32(resU64), nil
+			return safeUint32(resU64)
 		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return uint32(res64), nil
+			return safeIntToUint32(res64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
+			if resF64 < 0 || resF64 > float64(^uint32(0)) {
+				return 0, fmt.Errorf("convert: float value %f overflows uint32", resF64)
+			}
 			return uint32(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
 			return ToUint32E(resBool)
@@ -1001,9 +1213,9 @@ func ToUint32E(value interface{}, converters ...Uint32Converter) (uint32, error)
 			return 0, fmt.Errorf("convert: string \"%s\" to uint32 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint32(reflect.ValueOf(n).Int()), nil
+		return safeIntToUint32(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
-		return uint32(reflect.ValueOf(n).Uint()), nil
+		return safeUint32(reflect.ValueOf(n).Uint())
 	case float32, float64:
 		return uint32(reflect.ValueOf(n).Float()), nil
 	case bool:
@@ -1061,7 +1273,7 @@ func ToUint64E(value interface{}, converters ...Uint64Converter) (uint64, error)
 		if resU64, err := strconv.ParseUint(n, 0, 64); err == nil {
 			return resU64, nil
 		} else if res64, err := strconv.ParseInt(n, 0, 64); err == nil {
-			return uint64(res64), nil
+			return safeIntToUint64(res64)
 		} else if resF64, err := strconv.ParseFloat(n, 64); err == nil {
 			return uint64(resF64), nil
 		} else if resBool, err := strconv.ParseBool(n); err == nil {
@@ -1070,7 +1282,7 @@ func ToUint64E(value interface{}, converters ...Uint64Converter) (uint64, error)
 			return 0, fmt.Errorf("convert: string \"%s\" to uint64 failed", n)
 		}
 	case int, int8, int16, int32, int64:
-		return uint64(reflect.ValueOf(n).Int()), nil
+		return safeIntToUint64(reflect.ValueOf(n).Int())
 	case uint, uint8, uint16, uint32, uint64, uintptr:
 		return uint64(reflect.ValueOf(n).Uint()), nil
 	case float32, float64:
@@ -1319,7 +1531,7 @@ func ToInt8ArrayE(value interface{}, converters ...Int8ArrayConverter) ([]int8, 
 	}
 }
 
-// ToInt8Array convertit n'importe quel type de valeur en un tableau d'int8, en ignorant les erreurs.
+// ToInt8Array converts any type of value to an array of int8, ignoring errors.
 func ToInt8Array(value interface{}, converters ...Int8ArrayConverter) []int8 {
 	res, _ := ToInt8ArrayE(value, converters...)
 	return res
@@ -1713,6 +1925,108 @@ func ToUint64Array(value interface{}, converters ...Uint64ArrayConverter) []uint
 // ToUint64ArrayOrDefault converts any type of value to an array of uint64 or returns the provided default array if conversion fails.
 func ToUint64ArrayOrDefault(value interface{}, defaultValue []uint64, converters ...Uint64ArrayConverter) []uint64 {
 	res, err := ToUint64ArrayE(value, converters...)
+	if err != nil {
+		return defaultValue
+	}
+	return res
+}
+
+// ToFloat32ArrayE converts any type of value to an array of float32 or returns an error.
+// It handles various types including:
+//   - string, []byte, nil, bool
+//   - integer types (int, int8, int16, int32, int64)
+//   - unsigned integer types (uint, uint8, uint16, uint32, uint64)
+//   - float types (float32, float64)
+//   - fmt.Stringer, fmt.GoStringer, and error interfaces
+//
+// For other types, it uses fmt.Sprintf("%v", s).
+func ToFloat32ArrayE(value interface{}, converters ...Float32ArrayConverter) ([]float32, error) {
+	for _, converter := range converters {
+		if result := converter(value); result != nil {
+			return *result, nil
+		}
+	}
+
+	switch reflect.TypeOf(value).Kind() {
+	case reflect.Array, reflect.Slice:
+		v := reflect.ValueOf(value)
+		resArray := make([]float32, v.Len())
+		for i := 0; i < v.Len(); i++ {
+			res, err := ToFloat32E(v.Index(i).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert: cannot convert %v at index %d", v.Index(i).Interface(), i)
+			}
+			resArray[i] = res
+		}
+		return resArray, nil
+	default:
+		return nil, fmt.Errorf("convert: %T is not an array or slice", value)
+	}
+}
+
+// ToFloat32Array converts any type of value to an array of float32, ignoring errors.
+func ToFloat32Array(value interface{}, converters ...Float32ArrayConverter) []float32 {
+	res, _ := ToFloat32ArrayE(value, converters...)
+	return res
+}
+
+// ToFloat32ArrayOrDefault converts any type of value to an array of float32 or returns the provided default array if conversion fails.
+func ToFloat32ArrayOrDefault(value interface{}, defaultValue []float32, converters ...Float32ArrayConverter) []float32 {
+	if value == nil {
+		return defaultValue
+	}
+	res, err := ToFloat32ArrayE(value, converters...)
+	if err != nil {
+		return defaultValue
+	}
+	return res
+}
+
+// ToFloat64ArrayE converts any type of value to an array of float64 or returns an error.
+// It handles various types including:
+//   - string, []byte, nil, bool
+//   - integer types (int, int8, int16, int32, int64)
+//   - unsigned integer types (uint, uint8, uint16, uint32, uint64)
+//   - float types (float32, float64)
+//   - fmt.Stringer, fmt.GoStringer, and error interfaces
+//
+// For other types, it uses fmt.Sprintf("%v", s).
+func ToFloat64ArrayE(value interface{}, converters ...Float64ArrayConverter) ([]float64, error) {
+	for _, converter := range converters {
+		if result := converter(value); result != nil {
+			return *result, nil
+		}
+	}
+
+	switch reflect.TypeOf(value).Kind() {
+	case reflect.Array, reflect.Slice:
+		v := reflect.ValueOf(value)
+		resArray := make([]float64, v.Len())
+		for i := 0; i < v.Len(); i++ {
+			res, err := ToFloat64E(v.Index(i).Interface())
+			if err != nil {
+				return nil, fmt.Errorf("convert: cannot convert %v at index %d", v.Index(i).Interface(), i)
+			}
+			resArray[i] = res
+		}
+		return resArray, nil
+	default:
+		return nil, fmt.Errorf("convert: %T is not an array or slice", value)
+	}
+}
+
+// ToFloat64Array converts any type of value to an array of float64, ignoring errors.
+func ToFloat64Array(value interface{}, converters ...Float64ArrayConverter) []float64 {
+	res, _ := ToFloat64ArrayE(value, converters...)
+	return res
+}
+
+// ToFloat64ArrayOrDefault converts any type of value to an array of float64 or returns the provided default array if conversion fails.
+func ToFloat64ArrayOrDefault(value interface{}, defaultValue []float64, converters ...Float64ArrayConverter) []float64 {
+	if value == nil {
+		return defaultValue
+	}
+	res, err := ToFloat64ArrayE(value, converters...)
 	if err != nil {
 		return defaultValue
 	}
