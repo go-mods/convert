@@ -80,3 +80,157 @@ func TestToJsonValue(t *testing.T) {
 	personFromValue := value.Interface().(Person)
 	assert.Exactly(t, *person, personFromValue)
 }
+
+func TestGetConvertType(t *testing.T) {
+	now := time.Now()
+	duration := time.Hour
+
+	tests := []struct {
+		name     string
+		value    interface{}
+		expected reflect.Type
+	}{
+		// Tests signed integers
+		{
+			name:     "integer 1",
+			value:    1,
+			expected: int64Type,
+		},
+		{
+			name:     "int8",
+			value:    int8(1),
+			expected: int64Type,
+		},
+		{
+			name:     "int16",
+			value:    int16(1),
+			expected: int64Type,
+		},
+		{
+			name:     "int32",
+			value:    int32(1),
+			expected: int64Type,
+		},
+		{
+			name:     "int64",
+			value:    int64(1),
+			expected: int64Type,
+		},
+		// Tests unsigned integers
+		{
+			name:     "uint",
+			value:    uint(1),
+			expected: uint64Type,
+		},
+		{
+			name:     "uint8",
+			value:    uint8(1),
+			expected: uint64Type,
+		},
+		{
+			name:     "uint16",
+			value:    uint16(1),
+			expected: uint64Type,
+		},
+		{
+			name:     "uint32",
+			value:    uint32(1),
+			expected: uint64Type,
+		},
+		{
+			name:     "uint64",
+			value:    uint64(1),
+			expected: uint64Type,
+		},
+		// Tests floating-point numbers
+		{
+			name:     "float32",
+			value:    float32(3.14),
+			expected: float32Type,
+		},
+		{
+			name:     "float64",
+			value:    float64(3.14),
+			expected: float64Type,
+		},
+		{
+			name:     "float64 as integer",
+			value:    float64(1.0),
+			expected: int64Type,
+		},
+		// Tests strings
+		{
+			name:     "string",
+			value:    "test",
+			expected: stringType,
+		},
+		{
+			name:     "string numeric",
+			value:    "1",
+			expected: int64Type,
+		},
+		{
+			name:     "string numeric",
+			value:    "123",
+			expected: int64Type,
+		},
+		{
+			name:     "string float",
+			value:    "3.14",
+			expected: float64Type,
+		},
+		{
+			name:     "string bool true",
+			value:    "true",
+			expected: boolType,
+		},
+		{
+			name:     "string bool false",
+			value:    "false",
+			expected: boolType,
+		},
+		// Tests boolean values
+		{
+			name:     "bool true",
+			value:    true,
+			expected: boolType,
+		},
+		{
+			name:     "bool false",
+			value:    false,
+			expected: boolType,
+		},
+		// Tests time values
+		{
+			name:     "time",
+			value:    now,
+			expected: timeType,
+		},
+		{
+			name:     "duration",
+			value:    duration,
+			expected: durationType,
+		},
+		// Tests special cases
+		{
+			name:     "nil",
+			value:    nil,
+			expected: nilType,
+		},
+		{
+			name:     "string empty",
+			value:    "",
+			expected: stringType,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Logf("Input value type: %v", reflect.TypeOf(tt.value))
+			got := GetConvertType(tt.value)
+			if got != tt.expected {
+				t.Errorf("GetConvertType() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}

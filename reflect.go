@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"time"
+	"unicode"
 )
 
 // Caster is a function type for custom type casting.
@@ -344,6 +345,23 @@ func castTimeDurationE(value interface{}) (reflect.Value, error) {
 	return reflect.ValueOf(v), nil
 }
 
+// IsAlphanumeric checks if the given string consists of only alphanumeric characters.
+func IsAlphanumeric(value interface{}) bool {
+	// Check if the value is a string
+	str, ok := value.(string)
+	if !ok {
+		return false
+	}
+
+	// Iterate over each character in the string
+	for _, char := range str {
+		if !unicode.IsDigit(char) && unicode.IsLetter(char) {
+			return true
+		}
+	}
+	return false
+}
+
 // GetConvertType returns the reflect.Type of a value based on its conversion.
 func GetConvertType(value interface{}) reflect.Type {
 	if value == nil {
@@ -357,88 +375,64 @@ func GetConvertType(value interface{}) reflect.Type {
 	// If it's already a numeric type, use specific logic
 	switch actualKind {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return actualType
+		// Vérifier si c'est une durée
+		if _, ok := value.(time.Duration); ok {
+			return durationType
+		}
+		return int64Type // Always return int64 for integer types
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return actualType
+		return uint64Type // Always return uint64 for unsigned integer types
 	case reflect.Float32:
 		return float32Type
 	case reflect.Float64:
 		// For float64, check if it's actually an integer
 		f := value.(float64)
 		if f == float64(int(f)) {
-			return intType
+			return int64Type
 		}
 		return float64Type
+	case reflect.Bool:
+		return boolType
+	case reflect.String:
+		// Pour les chaînes vides, retourner directement stringType
+		if v := value.(string); v == "" {
+			return stringType
+		}
 	}
 
 	// For non-numeric types or types that require conversion
 	// try to find the type
+
+	// Check special types first
 	if _, err := ToTimeE(value); err == nil {
 		return timeType
 	}
 	if _, err := ToDurationE(value); err == nil {
 		return durationType
 	}
-	if _, err := ToBoolE(value); err == nil {
-		return boolType
+	if IsAlphanumeric(value) {
+		if _, err := ToBoolE(value); err == nil {
+			return boolType
+		}
 	}
 
-	// First check if it's an integer
+	// Then check numeric types
 	if intVal, err := ToIntE(value); err == nil {
 		// Check if it's a string or another type that could be a float
 		if floatVal, err := ToFloat64E(value); err == nil {
 			// If the float value is equal to its integer part, it's an integer
 			if float64(intVal) == floatVal {
-				// Determine the most appropriate integer type
-				if _, err := ToInt8E(value); err == nil {
-					if _, err := ToInt16E(value); err == nil {
-						if _, err := ToInt32E(value); err == nil {
-							if _, err := ToInt64E(value); err == nil {
-								return int64Type
-							}
-							return int32Type
-						}
-						return int16Type
-					}
-					return int8Type
-				}
-				return intType
+				return int64Type
 			} else {
 				return float64Type
 			}
 		}
-
-		// It's an integer
-		if _, err := ToInt8E(value); err == nil {
-			if _, err := ToInt16E(value); err == nil {
-				if _, err := ToInt32E(value); err == nil {
-					if _, err := ToInt64E(value); err == nil {
-						return int64Type
-					}
-					return int32Type
-				}
-				return int16Type
-			}
-			return int8Type
-		}
-		return intType
+		return int64Type
 	}
 
 	// Check if it's an unsigned integer
 	if _, err := ToUintE(value); err == nil {
-		if _, err := ToUint8E(value); err == nil {
-			if _, err := ToUint16E(value); err == nil {
-				if _, err := ToUint32E(value); err == nil {
-					if _, err := ToUint64E(value); err == nil {
-						return uint64Type
-					}
-					return uint32Type
-				}
-				return uint16Type
-			}
-			return uint8Type
-		}
-		return uintType
+		return uint64Type // Always return uint64 for unsigned integers
 	}
 
 	// Check if it's a float
@@ -449,7 +443,7 @@ func GetConvertType(value interface{}) reflect.Type {
 		return float64Type
 	}
 
-	// Check if it's a string
+	// Check if it's a string last
 	if _, err := ToStringE(value); err == nil {
 		return stringType
 	}
