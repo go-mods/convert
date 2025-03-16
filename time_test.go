@@ -1,10 +1,11 @@
 package convert
 
 import (
-	"github.com/dromara/carbon/v2"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/dromara/carbon/v2"
 )
 
 var now = time.Date(2022, 7, 2, 11, 45, 2, 651387237, time.UTC)

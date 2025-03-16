@@ -2,8 +2,9 @@ package convert
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type CustomType struct {
@@ -121,7 +122,7 @@ func TestToJsonIndent(t *testing.T) {
 	// Test with a simple map
 	value := map[string]interface{}{"key": "value"}
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result := ToJsonIndent(value)
 	assert.JSONEq(t, expected, string(result))
@@ -136,7 +137,7 @@ func TestToJsonIndentOrDefault(t *testing.T) {
 	value := map[string]interface{}{"key": "value"}
 	defaultValue := []byte(`{}`)
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result := ToJsonIndentOrDefault(value, defaultValue)
 	assert.JSONEq(t, expected, string(result))
@@ -150,7 +151,7 @@ func TestToJsonIndentE(t *testing.T) {
 	// Test with a simple map
 	value := map[string]interface{}{"key": "value"}
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result, err := ToJsonIndentE(value)
 	assert.NoError(t, err)
@@ -171,7 +172,7 @@ func TestToJsonIndentString(t *testing.T) {
 	// Test with a simple map
 	value := map[string]interface{}{"key": "value"}
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result := ToJsonIndentString(value)
 	assert.JSONEq(t, expected, result)
@@ -186,7 +187,7 @@ func TestToJsonIndentStringOrDefault(t *testing.T) {
 	value := map[string]interface{}{"key": "value"}
 	defaultValue := "{}"
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result := ToJsonIndentStringOrDefault(value, defaultValue)
 	assert.JSONEq(t, expected, result)
@@ -200,7 +201,7 @@ func TestToJsonIndentStringE(t *testing.T) {
 	// Test with a simple map
 	value := map[string]interface{}{"key": "value"}
 	expected := `{
-  "key": "value"
+	"key": "value"
 }`
 	result, err := ToJsonIndentStringE(value)
 	assert.NoError(t, err)
