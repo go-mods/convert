@@ -1,10 +1,14 @@
 package convert
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dromara/carbon/v2"
 )
+
+// ErrEmptyString est retourné lorsqu'une chaîne vide est fournie pour la conversion en time.Time
+var ErrEmptyString = errors.New("cannot convert empty string to time.Time")
 
 // TimeConverter is a function type that converts any value to a pointer to time.Time.
 // If the conversion fails, it returns nil.
@@ -71,6 +75,9 @@ func ToTimeE(value interface{}, converters ...TimeConverter) (time.Time, error) 
 	case *time.Time:
 		return *t, nil
 	case string:
+		if t == "" {
+			return time.Time{}, ErrEmptyString
+		}
 		c := carbon.Parse(t)
 		if c.Error != nil {
 			return time.Time{}, c.Error
