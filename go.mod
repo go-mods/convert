@@ -3,7 +3,7 @@ module github.com/go-mods/convert
 go 1.22
 
 require (
-	github.com/dromara/carbon/v2 v2.5.4
+	github.com/dromara/carbon/v2 v2.6.1
 	github.com/stretchr/testify v1.10.0
 )
 

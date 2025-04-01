@@ -10,8 +10,8 @@ import (
 
 var now = time.Date(2022, 7, 2, 11, 45, 2, 651387237, time.UTC)
 var nowStr = carbon.CreateFromStdTime(now, "UTC").ToRfc3339String("UTC")
-var nowDate = time.Date(2022, 7, 2, 0, 0, 0, 0, time.Local)
-var nowDateTime = time.Date(2022, 7, 2, 11, 45, 2, 0, time.Local)
+var nowDate = time.Date(2022, 7, 2, 0, 0, 0, 0, time.UTC)
+var nowDateTime = time.Date(2022, 7, 2, 11, 45, 2, 0, time.UTC)
 
 func TestToTime(t *testing.T) {
 	tests := []struct {
@@ -72,7 +72,7 @@ func TestToTime(t *testing.T) {
 				if got.IsZero() {
 					t.Errorf("ToTime() returned zero time for input %v, expected non-zero time", tt.input)
 				}
-				if !got.UTC().Equal(tt.expected.UTC()) {
+				if !got.Equal(tt.expected) {
 					t.Errorf("ToTime() = %v, want %v", got.UTC(), tt.expected.UTC())
 				}
 			}
@@ -162,7 +162,6 @@ func TestToTimeOrDefault(t *testing.T) {
 }
 
 func TestToLayoutTime(t *testing.T) {
-
 	type args struct {
 		layout string
 		value  interface{}
@@ -181,7 +180,7 @@ func TestToLayoutTime(t *testing.T) {
 		},
 		{
 			name:    "empty string with valid layout",
-			args:    args{carbon.DateLayout, ""},
+			args:    args{"Y-m-d", ""},
 			wantRes: time.Time{},
 			wantErr: true,
 		},
@@ -191,24 +190,20 @@ func TestToLayoutTime(t *testing.T) {
 			wantRes: time.Time{},
 			wantErr: true,
 		},
-		{"FromDateString", args{carbon.DateLayout, "2022-07-02"}, nowDate, false},
-
+		{"FromDateString", args{"Y-m-d", "2022-07-02"}, nowDate, false},
 		{"FromDateString", args{"m-d-y", "07-02-22"}, nowDate, false},
 		{"FromDateString", args{"m-d-Y", "07-02-2022"}, nowDate, false},
 		{"FromDateString", args{"m-j-Y", "07-2-2022"}, nowDate, false},
 		{"FromDateString", args{"n-d-Y", "7-02-2022"}, nowDate, false},
 		{"FromDateString", args{"n-j-Y", "7-2-2022"}, nowDate, false},
 		{"FromDateString", args{"n-j-y", "7-2-22"}, nowDate, false},
-
 		{"FromDateString", args{"d/m/y", "02/07/22"}, nowDate, false},
 		{"FromDateString", args{"d/m/Y", "02/07/2022"}, nowDate, false},
 		{"FromDateString", args{"j/m/Y", "2/07/2022"}, nowDate, false},
 		{"FromDateString", args{"d/n/Y", "02/7/2022"}, nowDate, false},
 		{"FromDateString", args{"j/n/Y", "2/7/2022"}, nowDate, false},
 		{"FromDateString", args{"j/n/y", "2/7/22"}, nowDate, false},
-
-		{"FromDateString", args{carbon.DateTimeLayout, "2022-07-02 11:45:02"}, nowDateTime, false},
-
+		{"FromDateString", args{"Y-m-d H:i:s", "2022-07-02 11:45:02"}, nowDateTime, false},
 		{"FromDateString", args{"m-d-y h:i:s", "07-02-22 11:45:02"}, nowDateTime, false},
 		{"FromDateString", args{"m-d-Y H:i:s", "07-02-2022 11:45:02"}, nowDateTime, false},
 		{"FromDateString", args{"m-j-Y h:i:s", "07-2-2022 11:45:02"}, nowDateTime, false},
@@ -338,7 +333,7 @@ func TestToTimeE(t *testing.T) {
 		{
 			name:    "nil input",
 			input:   nil,
-			wantErr: carbon.Parse("").Error,
+			wantErr: ErrEmptyString,
 		},
 		{
 			name:    "integer input",

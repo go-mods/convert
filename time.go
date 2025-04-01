@@ -7,7 +7,6 @@ import (
 	"github.com/dromara/carbon/v2"
 )
 
-// ErrEmptyString est retourné lorsqu'une chaîne vide est fournie pour la conversion en time.Time
 var ErrEmptyString = errors.New("cannot convert empty string to time.Time")
 
 // TimeConverter is a function type that converts any value to a pointer to time.Time.
@@ -120,18 +119,23 @@ func ToLayoutTimeE(layout string, value interface{}, converters ...TimeConverter
 	case *time.Time:
 		return *t, nil
 	case string:
+		if t == "" {
+			return time.Time{}, ErrEmptyString
+		}
+		if layout == "" {
+			return time.Time{}, errors.New("layout cannot be empty")
+		}
 		c := carbon.ParseByFormat(t, layout)
 		if c.Error != nil {
-			return time.Time{}, c.Error
+			c := carbon.ParseByLayout(t, layout)
+			if c.Error != nil {
+				return time.Time{}, c.Error
+			}
 		}
 		return c.StdTime(), nil
 	default:
 		valueStr := ToString(t)
-		c := carbon.ParseByFormat(valueStr, layout)
-		if c.Error != nil {
-			return time.Time{}, c.Error
-		}
-		return c.StdTime(), nil
+		return ToLayoutTimeE(layout, valueStr, converters...)
 	}
 }
 
